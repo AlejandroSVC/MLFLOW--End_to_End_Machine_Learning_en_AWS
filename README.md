@@ -4,7 +4,6 @@ Este script realiza clasificación binaria utilizando XGBoost en Spark con segui
 Lee un archivo Parquet, entrena un modelo, lo evalúa y registra resultados en MLflow.
 El script está listo para ser ejecutado en AWS EMR con `spark-submit` y manejará grandes volúmenes de datos gracias a la implementación distribuida de XGBoost para Spark.
 
-```
 ## Importación de bibliotecas
 Importación de módulos esenciales para procesamiento distribuido, machine learning, 
 seguimiento de experimentos y visualización de resultados
