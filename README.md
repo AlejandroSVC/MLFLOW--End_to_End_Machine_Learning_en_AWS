@@ -11,7 +11,8 @@ seguimiento de experimentos y visualización de resultados
 import pyspark                                                        # Biblioteca principal para computación distribuida
 from pyspark.sql import SparkSession                                  # Punto de entrada para DataFrames y SQL
 from pyspark.ml.feature import VectorAssembler                        # Para combinar características en un vector
-from pyspark.ml.evaluation import BinaryClassificationEvaluator, MulticlassClassificationEvaluator  # Evaluadores de modelos
+from pyspark.ml.evaluation import BinaryClassificationEvaluator,
+    MulticlassClassificationEvaluator                                 # Evaluadores de modelos
 from xgboost.spark import XGBoostClassifier                           # Clasificador XGBoost distribuido para Spark
 import mlflow                                                         # Plataforma para seguimiento de experimentos
 import mlflow.pyspark.ml                                              # Integración de MLflow con PySpark
@@ -24,7 +25,7 @@ import numpy as np                                                    # Cómputo
 Creación de una sesión Spark para procesamiento distribuido. 
 'appName' define el nombre visible en la interfaz de Spark UI
 ```
-spark = SparkSession.builder.appName('XGBoost Classification').getOrCreate()  # Inicializa el entorno Spark
+spark = SparkSession.builder.appName('XGBoost Classification').getOrCreate()               # Inicializa el entorno Spark
 ```
 ## Carga y preparación de datos
 Lectura del dataset en formato Parquet (optimizado para big data) y transformación a formato adecuado para algoritmos ML
@@ -40,7 +41,7 @@ features = [col for col in df.columns if col != 'target']             # Lista to
 assembler = VectorAssembler(inputCols=features, outputCol='features') # Configura ensamblador de vectores
 df = assembler.transform(df)                                          # Transforma DataFrame añadiendo columna 'features'
 ```
-# División de datos para entrenamiento y validación
+## División de datos para entrenamiento y validación
 Creación de conjuntos de entrenamiento y validación mediante muestreo estratificado
 Semilla fija para reproducibilidad de resultados
 ```
@@ -55,9 +56,11 @@ mlflow.set_experiment('New Experiment')                               # Crea/reu
 mlflow.pyspark.ml.autolog()                                           # Autoregistro de parámetros y métricas del modelo
 ```
 ## Entrenamiento y evaluación del modelo
-
-Bloque principal donde se define, entrena y evalúa el modelo XGBoost con registro completo en MLflow
 ```
+# ---------------------------------------------------------------------------------------------------------------------
+Bloque principal donde se define, entrena y evalúa el modelo XGBoost con registro completo en MLflow
+# ---------------------------------------------------------------------------------------------------------------------
+
 with mlflow.start_run(run_name='xgboost_model_classification') as run:
     # Configuración del clasificador XGBoost para problema binario
     xgb_clf = XGBoostClassifier(
@@ -75,9 +78,9 @@ with mlflow.start_run(run_name='xgboost_model_classification') as run:
     # Generación de predicciones
     preds = model.transform(val_df)      # Predice sobre conjunto de validación
     
-    # ----------------------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------------------------------------------
     # Cálculo y registro de métricas de evaluación
-    # ----------------------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------------------------------------------
     # Precisión (Accuracy)
     evaluator = MulticlassClassificationEvaluator(labelCol='target', predictionCol='prediction', metricName='accuracy')
     accuracy = evaluator.evaluate(preds)             # Calcula precisión
@@ -115,9 +118,9 @@ with mlflow.start_run(run_name='xgboost_model_classification') as run:
     f1 = evaluator_f1.evaluate(preds)                # Calcula F1
     mlflow.log_metric('f1', f1)                      # Registra en MLflow
     
-    # ----------------------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------------------------------------------
     # Generación de visualizaciones
-    # ----------------------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------------------------------------------
     # Conversión de resultados a arrays de NumPy para visualización
     # (Asume que el conjunto de validación es manejable en tamaño)
     labels = np.array([row['target'] for row in preds.select('target').collect()])                        # Obtiene etiquetas reales
