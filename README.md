@@ -1,4 +1,6 @@
-# MLOps--MLflow--Cloud_Machine_Learning_en_AWS_usando_MLflow
+# Machine Learning distribuido en AWS usando MLflow
+
+![banner_mlflow](docs/assets/images/banner_mlflow.jpg)
 
 Este script realiza clasificación binaria utilizando XGBoost en Spark con seguimiento de MLflow.
 Lee un archivo Parquet, entrena un modelo, lo evalúa y registra resultados en MLflow.
